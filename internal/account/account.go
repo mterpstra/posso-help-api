@@ -4,6 +4,7 @@ import (
   "log"
   "fmt"
   "context"
+  "strings"
   "posso-help/internal/db"
   "go.mongodb.org/mongo-driver/bson"
 )
@@ -32,6 +33,15 @@ func getAllPhoneNumberVariants(phoneNumber string) ([]string) {
     tmp := fmt.Sprintf("%s-%s-%s-%s", 
                        phoneNumber[0:2], phoneNumber[2:4], 
                        phoneNumber[4:9], phoneNumber[9:13])
+    variants = append(variants, tmp);
+  }
+
+  // 551223451234 -> 55-12-12345-1234
+  // Missing Brazils new 9 in 5th spot specifying mobile number
+  if ((len(phoneNumber)==12) && strings.HasPrefix(phoneNumber, "55")) {
+    tmp := fmt.Sprintf("%s-%s-9%s-%s",
+                       phoneNumber[0:2], phoneNumber[2:4],
+                       phoneNumber[4:8], phoneNumber[8:12])
     variants = append(variants, tmp);
   }
 
