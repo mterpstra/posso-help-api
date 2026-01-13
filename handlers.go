@@ -40,7 +40,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  data, err := db.ReadOrdered(datatype, user.ID.Hex())
+  data, err := db.ReadOrdered(datatype, user.Account)
   if err != nil {
     w.WriteHeader(http.StatusBadRequest) 
     fmt.Fprintf(w, "%v", err)
@@ -106,7 +106,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
   }
   fieldCount := len(headers)
   log.Printf("Field Count: %+v\n", fieldCount)
-  record := bson.M{"account": u.ID.Hex()}
+  record := bson.M{"account": u.Account}
   collection := db.GetCollection(datatype);
   for {
     row, err := csvReader.Read()
@@ -131,9 +131,6 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
             record[key] = tag 
           }
         }
-
-
-
       }
     }
     log.Printf("record: %+v\n", record)
@@ -145,7 +142,6 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
     log.Printf("result: %+v\n", result)
 
   }
-
 }
 
 func HandleDataGet(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +163,7 @@ func HandleDataGet(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  data, err := db.ReadUnordered(datatype, user.ID.Hex())
+  data, err := db.ReadUnordered(datatype, user.Account)
   if err != nil {
     w.WriteHeader(http.StatusBadRequest) 
     fmt.Fprintf(w, "%v", err)
@@ -225,7 +221,7 @@ func HandleDataPut(w http.ResponseWriter, r *http.Request) {
     log.Printf("Error _id required: %v", err)
     return 
   }
-  filter := bson.M{"_id": objID, "account": u.ID.Hex()}
+  filter := bson.M{"_id": objID, "account": u.Account}
   delete(data, "_id")
 
   _, err = collection.UpdateOne(context.TODO(), filter, bson.M{"$set": data})
@@ -280,7 +276,7 @@ func HandleDataPatch(w http.ResponseWriter, r *http.Request) {
     log.Printf("Error _id required: %v", err)
     return 
   }
-  filter := bson.M{"_id": objID, "account": u.ID.Hex()}
+  filter := bson.M{"_id": objID, "account": u.Account}
   delete(data, "_id")
 
   _, err = collection.UpdateOne(context.TODO(), filter, bson.M{"$set": data})
@@ -308,7 +304,6 @@ func HandleDataPatch(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("X-New-User", string(jsonData))
   }
 
-  log.Printf("Successful Patch")
   return
 }
 
@@ -354,8 +349,7 @@ func HandleDataPost(w http.ResponseWriter, r *http.Request) {
     return 
   }
 
-  // Use the users user id as the account number for now
-  data["account"] = u.ID.Hex()
+  data["account"] = u.Account
 
   // Name was used before
   data["created_by"] = u.GetDisplayName()
