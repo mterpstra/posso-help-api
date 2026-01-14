@@ -1,3 +1,4 @@
-2235 F angus natimorto
-2236 M nelore Aborto
-Jupiter
+1 natimorto
+2 Aborto
+3 Morreu
+4 Morto

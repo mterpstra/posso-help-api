@@ -75,9 +75,8 @@ func ProcessEntries(entries []Entry) error {
 func (e Entry) Process() error {
 
   birthMessageParser := &BirthMessage{}
-  deathMessageParser := &DeathMessage{}
   parsers := []Parser{
-    deathMessageParser,
+    &DeathMessage{},
     birthMessageParser,
     &RainMessage{},
     &TemperatureMessage{},
@@ -120,8 +119,6 @@ func (e Entry) Process() error {
         log.Printf("WARNING: Could not load areas from account: %v\n", team.Account)
       } 
       birthMessageParser.AreaParser = areaParser
-      deathMessageParser.AreaParser = areaParser
-
       baseMessageValues := &BaseMessageValues {
         Account      : team.Account,
         PhoneNumber  : message.From,

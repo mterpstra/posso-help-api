@@ -1,146 +1,101 @@
 package chat
 
 import (
-  "log"
-  "fmt"
-  "strings"
-  "context"
-  "posso-help/internal/area"
-  "posso-help/internal/db"
-  "posso-help/internal/date"
-  "posso-help/internal/utils"
-  "go.mongodb.org/mongo-driver/bson"
+	"log"
+	"fmt"
+	"strings"
+	"context"
+	"posso-help/internal/db"
+	"posso-help/internal/date"
+	"posso-help/internal/utils"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Death struct {
-  Phone       string `json:"phone"`
-  Name        string `json:"name"`
-  Date        string `json:"date"`
-  Tag         int64  `json:"tag"`
-  Sex         string `json:"sex"`
-  Cause       string `json:"cause"`
-  Area        string `json:"area"`
+	Phone       string `json:"phone"`
+	Name        string `json:"name"`
+	Date        string `json:"date"`
+	Tag         int64  `json:"tag"`
+	Sex         string `json:"sex"`
+	Cause       string `json:"cause"`
 }
 
 type DeathEntry struct {
-  Id       int    `json:"tag"`
-  Breed    string `json:"breed"`
-  Sex      string `json:"sex"`
-  Cause    string `json:"cause"`
+	Id       int    `json:"tag"`
+	Cause    string `json:"cause"`
 }
 
 type DeathMessage struct {
-  Date string
-  Entries []*DeathEntry
-  Area *area.Area
-  AreaParser *area.AreaParser
-  Total int
+	Date string
+	Entries []*DeathEntry
+	Total int
 }
 
 func (b *DeathMessage) GetCollection() string {
-  return "death"
+	return "death"
 }
 
 func (d *DeathMessage) Parse(message string) bool {
-  found := false
-  lines := strings.Split(message, "\n")
-  for _, line := range lines {
-    if date, found := date.ParseAsDateLine(line); found {
-      d.Date = date
-    }
-    if entry := d.parseAsDeathLine(line); entry != nil {
-      d.Entries = append(d.Entries, entry)
-      d.Total++
-      found = true
-    }
-    if areaName, found := d.AreaParser.ParseAsAreaLine(line); found {
-      d.Area = &area.Area{Name: areaName}
-    }
-  }
-
-  if found && d.Area == nil {
-    d.Area = &area.Area{Name: "unknown"}
-  }
-  return found 
+	found := false
+	lines := strings.Split(message, "\n")
+	for _, line := range lines {
+		if date, found := date.ParseAsDateLine(line); found {
+			d.Date = date
+		}
+		if entry := d.parseAsDeathLine(line); entry != nil {
+			d.Entries = append(d.Entries, entry)
+			d.Total++
+			found = true
+		}
+	}
+	return found 
 }
 
 func (d *DeathMessage) parseAsDeathLine(line string) (*DeathEntry) {
-  var num int
-  var sex, cause, breed string
-  line = utils.SanitizeLine(line)
-
-  // Death Line with tag, sex, breed, cause: 2235 F angus natimorto
-  
-  n, err := fmt.Sscanf(line, "%d %s %s %s", &num, &sex, &breed, &cause)
-  if err == nil && n == 4 && num > 0   &&
-    utils.StringIsOneOf(sex, SEXES)    && 
-    utils.StringIsOneOf(cause, DEATHS) &&
-    utils.StringIsOneOf(breed, BREEDS) {
-      return &DeathEntry{Id:num, Sex:sex, Cause:cause, Breed: breed}
-  }
-
-  // Death Line with Sex
-  n, err = fmt.Sscanf(line, "%d %s %s", &num, &sex, &cause)
-  if err == nil && n == 3 && num > 0 &&
-    (utils.StringIsOneOf(sex, SEXES)) && (utils.StringIsOneOf(cause, DEATHS)) {
-      return &DeathEntry{Id:num, Sex:sex, Cause:cause}
-  }
-
-  // Death line with NO Sex 
-  n, err = fmt.Sscanf(line, "%d %s", &num, &cause)
-  if err == nil && n == 2 && num > 0 &&
-    (utils.StringIsOneOf(cause, DEATHS)) {
-      return &DeathEntry{Id:num, Cause:cause}
-  }
-
-  return nil
+	var num int
+	var cause string
+	line = utils.SanitizeLine(line)
+	n, err := fmt.Sscanf(line, "%d %s", &num, &cause)
+	if err == nil && n == 2 && num > 0 &&
+	(utils.StringIsOneOf(cause, DEATHS)) {
+		return &DeathEntry{Id:num, Cause:cause}
+	}
+	return nil
 }
 
 func (d *DeathMessage) Text(lang string) string {
-  reply := map[string]string {
-    "en-US" : "Zap Manejo has detected death data. " +  
-              "We added %d deaths to area %s. "      + 
-              "To claim your data and see a report " + 
-              "sign up at https://dashboard.zapmanejo.com/",
-    "pt-BR" : "Zap Manejo detectou dados de óbitos. "     + 
-              "Adicionamos %d  óbitos à área %s. "        + 
-              "Para reivindicar seus dados e visualizar " + 
-              "um relatório, cadastre-se em https://dashboard.zapmanejo.com/",
-  }
+	reply := map[string]string {
+		"en-US" : "Zap Manejo has detected death data. " +  
+		"We added %d deaths. "                 + 
+		"To claim your data and see a report " + 
+		"sign up at https://dashboard.zapmanejo.com/",
+		"pt-BR" : "Zap Manejo detectou dados de óbitos. "     + 
+		"Adicionamos %d óbitos. "                   + 
+		"Para reivindicar seus dados e visualizar " + 
+		"um relatório, cadastre-se em https://dashboard.zapmanejo.com/",
+	}
 
-  if lang == "pt-BR" ||  lang == "en-US" {
-    return fmt.Sprintf(reply[lang], d.Total, d.Area.Name)
-  }
+	if lang == "pt-BR" ||  lang == "en-US" {
+		return fmt.Sprintf(reply[lang], d.Total)
+	}
 
-  log.Printf("Unsupported or Unknown Language: (%s)", lang)
-  return fmt.Sprintf(reply["pt-BR"], d.Total, d.Area.Name)
+	log.Printf("Unsupported or Unknown Language: (%s)", lang)
+	return fmt.Sprintf(reply["pt-BR"], d.Total)
 }
 
 func (d *DeathMessage) Insert(bmv *BaseMessageValues) error {
-  deaths := db.GetCollection("deaths")
-  log.Printf("inserting death message to collection: %v\n", deaths)
-  for _, death := range d.Entries {
-    document := bmv.ToMap()
-    document = append(document, bson.E{Key: "tag", Value: death.Id})
-    document = append(document, bson.E{Key: "sex", Value: death.Sex})
-    document = append(document, bson.E{Key: "cause", Value: death.Cause})
-    document = append(document, bson.E{Key: "breed", Value: death.Breed})
-    document = append(document, bson.E{Key: "area", Value: d.Area.Name})
-
-    // If the message text has a date, use it over the message date
-    if d.Date != "" {
-      document = append(document, bson.E{Key: "date", Value: d.Date})
-    }
-
-    result, err := deaths.InsertOne(context.TODO(), document)
-    if err != nil {
-      log.Printf("error inserting death: %v\n", err)
-      return err
-    }
-
-    log.Printf("insert result: %v\n", result)
-  }
-
-  log.Printf("death inserted successfully")
-  return nil
+	collection := db.GetCollection("births")
+	log.Printf("updating death message to collection: %v\n", collection)
+	for _, death := range d.Entries {
+		document := bson.D{bson.E{Key: "cause", Value: death.Cause}}
+		filter := bson.M{"tag": death.Id, "account": bmv.Account}
+		result, err := collection.UpdateOne(context.TODO(), filter, bson.M{"$set": document})
+		if err != nil {
+			log.Printf("error inserting death: %v\n", err)
+			return err
+		}
+		log.Printf("update result: %v\n", result)
+	}
+	log.Printf("death updated successfully")
+	return nil
 }
