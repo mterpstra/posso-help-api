@@ -7,7 +7,16 @@ const BRANGUS = "brangus"
 const STA_ZELIA = "sta.zelia"
 const CRUZADA = "cruzada"
 const CRUZADO = "cruzado"
-var BREEDS = []string{ANGUS, NELORE, BRANGUS, STA_ZELIA, CRUZADA, CRUZADO}
+const MURRAH = "murrah"
+const MEDITERRANEO = "mediterrâneo"
+const JAFARABADI = "jafarabadi"
+const CARABAO = "carabao"
+
+var BREEDS = []string{
+	ANGUS, NELORE, BRANGUS, STA_ZELIA,
+	CRUZADA, CRUZADO, MURRAH, MEDITERRANEO,
+	JAFARABADI, CARABAO,
+}
 
 // Sex of Animal
 const MALE = "m"

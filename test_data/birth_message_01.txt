@@ -1,4 +1,8 @@
 1135 m angus
 1136 F nelore
 FFT 1137 F nelore
+8880 F murrah
+8881 M mediterrâneo
+8882 F jafarabadi
+8883 M carabao
 mucájá
