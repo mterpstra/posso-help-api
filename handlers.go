@@ -205,8 +205,10 @@ func HandleDataPut(w http.ResponseWriter, r *http.Request) {
     log.Printf("Error reading request body: %v", err)
     return
   }
+
   log.Printf("user: %s  collection: %v  body: %s",
-  u.Username, collection, string(bodyBytes))
+		u.Email, collection, string(bodyBytes))
+
   data := make(map[string]interface{})
   err = json.Unmarshal(bodyBytes, &data)
   if err != nil {
@@ -261,7 +263,8 @@ func HandleDataPatch(w http.ResponseWriter, r *http.Request) {
     return
   }
   log.Printf("user: %s  collection: %v  body: %s",
-  u.Username, collection, string(bodyBytes))
+		u.Email, collection, string(bodyBytes))
+
   data := make(map[string]interface{})
   err = json.Unmarshal(bodyBytes, &data)
   if err != nil {
@@ -338,7 +341,7 @@ func HandleDataPost(w http.ResponseWriter, r *http.Request) {
   }
 
   log.Printf("user: %s  collection: %v  body: %s",
-  u.Username, collection, string(bodyBytes))
+		u.Email, collection, string(bodyBytes))
 
   data := make(map[string]interface{})
 
