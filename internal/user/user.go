@@ -11,7 +11,6 @@ import (
 
 type User struct {
   ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-  Username    string             `json:"username"`
   Email       string             `json:"email"`
   Password    string             `json:"-"` // Excluded from JSON responses
   PhoneNumber string             `bson:"phone_number" json:"phone_number"`
@@ -42,10 +41,6 @@ func (u *User) GetDisplayName() string {
 
   if (u.Name != "") {
     return u.Name
-  }
-
-  if (u.Username != "") {
-    return u.Username
   }
 
   if (u.Email != "") {

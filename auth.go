@@ -3,7 +3,6 @@ package main
 import (
   "context"
   "math/rand"
-  "encoding/hex"
   "encoding/json"
   "errors"
   "log"
@@ -35,7 +34,6 @@ type Claims struct {
 
 // Registration request structure
 type RegisterRequest struct {
-  Username    string `json:"username"`
   Name        string `json:"name,omitempty"`
   Email       string `json:"email"`
   Password    string `json:"password"`
@@ -190,8 +188,8 @@ func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
   }
 
   // Validate input
-  if req.Email == "" || req.Password == "" || req.Username == "" {
-    response := AuthResponse{Success: false, Message: "Email, username and password are required"}
+  if req.Email == "" || req.Password == "" {
+    response := AuthResponse{Success: false, Message: "Email and password are required"}
     json.NewEncoder(w).Encode(response)
     log.Printf("invalid input")
     return
@@ -227,7 +225,6 @@ func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
 
   // Create new user
   user := user.User{
-    Username:     req.Username,
     Name:         req.Name,
     Email:        req.Email,
     Password:     hashedPassword,
@@ -453,52 +450,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
     next.ServeHTTP(w, r.WithContext(ctx))
   })
-}
-
-// Auto-register from WhatsApp message
-func AutoRegisterFromWhatsApp(phoneNumber, name string) (*user.User, error) {
-  collection := db.GetCollection("users")
-
-  // Check if user already exists with this phone number
-  var existingUser user.User
-  err := collection.FindOne(context.TODO(), bson.M{"phone_number": phoneNumber}).Decode(&existingUser)
-  if err == nil {
-    return &existingUser, nil // User already exists
-  }
-
-  // Create auto-generated email and username
-  email := fmt.Sprintf("%s@whatsapp.zapmanejo.com", phoneNumber)
-  username := fmt.Sprintf("whatsapp_%s", phoneNumber)
-
-  // Generate random password for WhatsApp users
-  randomBytes := make([]byte, 16)
-  rand.Read(randomBytes)
-  randomPassword := hex.EncodeToString(randomBytes)
-
-  hashedPassword, err := password.GetSalted(randomPassword)
-  if err != nil {
-    return nil, err
-  }
-
-  // Create new WhatsApp user (auto-activated)
-  user := user.User{
-    Username:    username,
-    Email:       email,
-    Password:    hashedPassword,
-    PhoneNumber: phoneNumber,
-    Name:        name,
-    CreatedAt:   time.Now(),
-    UpdatedAt:   time.Now(),
-    IsActive:    true, // WhatsApp users are auto-activated
-  }
-
-  result, err := collection.InsertOne(context.TODO(), user)
-  if err != nil {
-    return nil, err
-  }
-
-  user.ID = result.InsertedID.(primitive.ObjectID)
-  return &user, nil
 }
 
 func HandleGetUser(w http.ResponseWriter, r *http.Request) {
