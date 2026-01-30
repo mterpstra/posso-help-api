@@ -19,14 +19,12 @@ type Birth struct {
   Name      string `json:"phone"`
   Date      string `json:"date"`
   Tag       int64  `json:"tag" bson:"tag, omitempty"`
-  Pure      bool   `json:"pure_breed"`
   Sex       string `json:"sex"`
   Breed     string `json:"breed"`
   Area      string `json:"area"`
 }
 
 type BirthEntry struct {
-  PureBred bool   `json:"pure_bred"`
   Id       int    `json:"tag"`
   Sex      string `json:"sex"`
   Breed    string `json:"breed"`
@@ -86,23 +84,14 @@ func (b *BirthMessage) Parse(message string) bool {
 
 func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
   var num int
-  var pure, sex, breed string
+  var sex, breed string
   line = utils.SanitizeLine(line)
 
   // Standard Birth Line
   n, err := fmt.Sscanf(line, "%d %s %s", &num, &sex, &breed)
   if err == nil && n == 3 && num > 0 &&
     (utils.StringIsOneOf(sex, SEXES)) && (utils.StringIsOneOf(breed, BREEDS)) {
-    return &BirthEntry{false, num, sex, breed}
-  }
-
-  // Pure Breed Birth Line
-  n, err = fmt.Sscanf(line, "%s %d %s %s", &pure, &num, &sex, &breed)
-  if err == nil && n == 4 && num > 0 &&
-    (utils.StringIsOneOf(sex, SEXES)) && 
-    (utils.StringIsOneOf(breed, BREEDS) &&
-    (pure == PURE_BREED)) {
-    return &BirthEntry{true, num, sex, breed}
+    return &BirthEntry{num, sex, breed}
   }
 
   return nil
@@ -134,7 +123,6 @@ func (b *BirthMessage) Insert(bmv *BaseMessageValues) error {
   for _, birth := range b.Entries {
     document := bmv.ToMap()
     document = append(document, bson.E{Key: "tag", Value: birth.Id})
-    document = append(document, bson.E{Key: "pure_breed", Value: birth.PureBred})
     document = append(document, bson.E{Key: "sex", Value: birth.Sex})
     document = append(document, bson.E{Key: "breed", Value: birth.Breed})
     document = append(document, bson.E{Key: "area", Value: b.Area.Name})

@@ -31,6 +31,3 @@ const ABORTO     = "aborto"       // aborted
 const NATIMORTO  = "natimorto"    // stillborn
 const NATIMORTOS = "natimortos"   // stillbirths
 var DEATHS = []string{MORREU, MORTO, NASCEU, ABORTO, NATIMORTO, NATIMORTOS}
-
-// Pure Breed Specifier
-const PURE_BREED = "fft" 
