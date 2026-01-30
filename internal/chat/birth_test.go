@@ -13,34 +13,31 @@ type BirthTest struct {
 }
 
 func TestBirthMessageNoArea(t *testing.T) {
-  input := `88888 m Cruzado
-            FFT 823 F nelore`
+  input := `88888 m Cruzado`
 
   bm := &BirthMessage{}
   bm.Parse(input)
-  assert.Equal(t, bm.Total, 2, "Total births do not match")
+  assert.Equal(t, bm.Total, 1, "Total births do not match")
   assert.Nil(t, bm.Area, "Area should be nil")
 }
 
 func TestBirthMessageWithArea(t *testing.T) {
   input := `88888 m Cruzado
-            FFT 823 F nelore
             espirito santo`
 
   bm := &BirthMessage{}
   bm.Parse(input)
-  assert.Equal(t, bm.Total, 2, "Total births do not match")
+  assert.Equal(t, bm.Total, 1, "Total births do not match")
   assert.Equal(t, bm.Area.Name, "espirito santo", "Area does not match")
 }
 
 func TestBirthMessageWithNewArea(t *testing.T) {
   input := `88888 m Cruzado
-            FFT 823 F nelore
             Jupiter`
 
   bm := &BirthMessage{}
   bm.Parse(input)
-  assert.Equal(t, 2, bm.Total, "Total births do not match")
+  assert.Equal(t, 1, bm.Total, "Total births do not match")
   assert.NotNil(t, bm.Area, "Area should not be nil")
   assert.Equal(t, "jupiter", bm.Area.Name, "Area does not match")
 }
@@ -50,16 +47,14 @@ func TestParseBithLine(t *testing.T) {
   /* @todo: this test needs to be revsited
   bm := &BirthMessage{}
   tests := []BirthTest {
-    //   INPUT               parsed   Birth{pure,  id,    sex,    breed}     area
+    //   INPUT               parsed   Birth{id,    sex,    breed}     area
 
     // Success Birth Cases
-    BirthTest{"1111 m angus",      true,  &BirthEntry{false, 1111,  MALE,   ANGUS},     ""},
-    BirthTest{"1212 F   nelore",   true,  &BirthEntry{false, 1212,  FEMALE, NELORE},    ""},
-    BirthTest{"342   f Brangus",   true,  &BirthEntry{false, 342,   FEMALE, BRANGUS},   ""},
-    BirthTest{"  99 M Sta. Zelia", true,  &BirthEntry{false, 99,    MALE,   STA_ZELIA}, ""},
-    BirthTest{"88888 m Cruzado  ", true,  &BirthEntry{false, 88888, MALE,   CRUZADO},   ""},
-    BirthTest{"FFT 823 F nelore",  true,  &BirthEntry{true,  823,   FEMALE, NELORE},    ""},
-    BirthTest{"FFT 864 M nelore",  true,  &BirthEntry{true,  864,   MALE,   NELORE},    ""},
+    BirthTest{"1111 m angus",      true,  &BirthEntry{1111,  MALE,   ANGUS},     ""},
+    BirthTest{"1212 F   nelore",   true,  &BirthEntry{1212,  FEMALE, NELORE},    ""},
+    BirthTest{"342   f Brangus",   true,  &BirthEntry{342,   FEMALE, BRANGUS},   ""},
+    BirthTest{"  99 M Sta. Zelia", true,  &BirthEntry{99,    MALE,   STA_ZELIA}, ""},
+    BirthTest{"88888 m Cruzado  ", true,  &BirthEntry{88888, MALE,   CRUZADO},   ""},
 
     // Just some text, should all be ignored
     BirthTest{"Nothing parsed",    false, nil, ""},
@@ -67,13 +62,12 @@ func TestParseBithLine(t *testing.T) {
     BirthTest{"just \n stime \n",  false, nil, ""},
 
     // Birth and Area on the same line
-    BirthTest{"12941 F Angus Filhos de Eva",  true,  &BirthEntry{false,  12941,   FEMALE,   ANGUS}, "filhos de eva"},
-    BirthTest{"FFT 8383 M Nelore mãe velha",  true,  &BirthEntry{true,    8383,   MALE,     NELORE}, "mãe velha"},
+    BirthTest{"12941 F Angus Filhos de Eva",  true,  &BirthEntry{12941,   FEMALE,   ANGUS}, "filhos de eva"},
   }
 
   for index, test := range tests {
     birth := bm.parseAsBirthLine(test.Input)
-    
+
     // Not supposed to be found, this is good
     if !test.Found && birth == nil {
       continue
