@@ -4,6 +4,7 @@ import (
   "context"
   "log"
   "os"
+  "strconv"
   "strings"
   "time"
 
@@ -73,7 +74,11 @@ func ReadUnordered(collection string, account string, filters map[string]string)
   accounts := []string{account, "000000000000000000000000"}
 	filter := bson.M{ "account": bson.M{"$in": accounts}}
   for key, value := range filters {
-    filter[key] = value
+    if num, err := strconv.Atoi(value); err == nil {
+      filter[key] = num
+    } else {
+      filter[key] = value
+    }
   }
   cursor, err := dataset.Find(context.Background(), filter)
   if err != nil {
