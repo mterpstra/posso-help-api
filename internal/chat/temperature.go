@@ -84,7 +84,7 @@ func (r *TemperatureMessage) Text(lang string) string {
     "en-US" : "Zap Manejo has detected temperature data. " + 
               "We added %d days of temperature data.",
     "pt-BR" : "Zap Manejo detectou dados de temperatura. " +
-		          "Adicionamos dados de temperatura dos últimos %d dias.",
+              "Adicionamos dados de temperatura dos últimos %d dias.",
   }
 
   if lang == "pt-BR" ||  lang == "en-US" {
