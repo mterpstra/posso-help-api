@@ -163,11 +163,26 @@ func HandleDataGet(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  data, err := db.ReadUnordered(datatype, user.Account)
+  filters := map[string]string{}
+  searchFields := r.URL.Query().Get("search_fields")
+  searchValues := r.URL.Query().Get("search_values")
+  if searchFields != "" && searchValues != "" {
+    fields := strings.Split(searchFields, ",")
+    values := strings.Split(searchValues, ",")
+    if len(fields) != len(values) {
+      http.Error(w, "search_fields and search_values must have the same number of items", http.StatusBadRequest)
+      return
+    }
+    for i, field := range fields {
+      filters[field] = values[i]
+    }
+  }
+
+  data, err := db.ReadUnordered(datatype, user.Account, filters)
   if err != nil {
-    w.WriteHeader(http.StatusBadRequest) 
+    w.WriteHeader(http.StatusBadRequest)
     fmt.Fprintf(w, "%v", err)
-    return 
+    return
   }
 
   json, err := json.Marshal(data)

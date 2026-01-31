@@ -4,6 +4,7 @@ import (
   "context"
   "log"
   "os"
+  "strconv"
   "strings"
   "time"
 
@@ -67,11 +68,20 @@ func ReadOrdered(collection string, account string) ([]bson.D, error) {
 }
 
 // No Order
-func ReadUnordered(collection string, account string) ([]bson.M, error) {
+func ReadUnordered(collection string, account string, filters map[string]string) ([]bson.M, error) {
   dataset := GetCollection(collection)
 
   accounts := []string{account, "000000000000000000000000"}
 	filter := bson.M{ "account": bson.M{"$in": accounts}}
+  for key, value := range filters {
+    if strings.HasPrefix(value, "^") {
+      filter[key] = bson.M{"$regex": value, "$options": "i"}
+    } else if num, err := strconv.Atoi(value); err == nil {
+      filter[key] = num
+    } else {
+      filter[key] = value
+    }
+  }
   cursor, err := dataset.Find(context.Background(), filter)
   if err != nil {
     log.Fatal(err)

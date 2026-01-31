@@ -47,7 +47,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
     }
     print(termColors[colorIndex])
     start := time.Now()
-    log.Printf("Started %s %s", r.Method, r.URL.Path)
+    log.Printf("Started %s %s %v", r.Method, r.URL.Path, r.URL.Query())
     next.ServeHTTP(w, r) // Call the next handler in the chain
     log.Printf("Completed %s %s in %v", r.Method, r.URL.Path, time.Since(start))
     print("\033[0m")
