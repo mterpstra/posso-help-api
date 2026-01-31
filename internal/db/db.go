@@ -74,7 +74,9 @@ func ReadUnordered(collection string, account string, filters map[string]string)
   accounts := []string{account, "000000000000000000000000"}
 	filter := bson.M{ "account": bson.M{"$in": accounts}}
   for key, value := range filters {
-    if num, err := strconv.Atoi(value); err == nil {
+    if strings.HasPrefix(value, "^") {
+      filter[key] = bson.M{"$regex": value, "$options": "i"}
+    } else if num, err := strconv.Atoi(value); err == nil {
       filter[key] = num
     } else {
       filter[key] = value
