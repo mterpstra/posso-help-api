@@ -100,13 +100,9 @@ func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
 func (b *BirthMessage) Text(lang string) string {
   reply := map[string]string {
     "en-US" : "Zap Manejo has detected birth data. " +
-              "We added %d births to area %s. "      + 
-              "To claim your data and see a report " + 
-              "sign up at https://dashboard.zapmanejo.com/",
-    "pt-BR" : "Zap Manejo detectou dados de nascimento. "               + 
-              "Adicionamos %d nascimentos à área %s. "                  + 
-              "Para reivindicar seus dados e visualizar um relatório, " + 
-              "cadastre-se em https://dashboard.zapmanejo.com/",
+              "We added %d births to area %s.",
+    "pt-BR" : "Zap Manejo detectou dados de nascimento. " + 
+              "Adicionamos %d nascimentos à área %s.",
   }
 
   if lang == "pt-BR" ||  lang == "en-US" {

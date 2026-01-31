@@ -69,12 +69,10 @@ func (r *RainMessage) parseRainLine(line string) (*RainEntry) {
 
 func (r *RainMessage) Text(lang string) string {
   reply := map[string]string {
-    "en-US" : "Zap Manejo has detected rainfall data.  "        + 
-              "We added %d mm of rain. To claim your data and " + 
-              "see a report sign up at https://dashboard.zapmanejo.com/",
-    "pt-BR" : "Zap Manejo detectou dados de precipitação. "                + 
-              "Adicionamos %d  mm de chuva.  Para reivindicar seus dados " +
-              "e ver um relatório, inscreva-se em https://dashboard.zapmanejo.com/",
+    "en-US" : "Zap Manejo has detected rainfall data. " + 
+              "We added %d mm of rain.",
+    "pt-BR" : "Zap Manejo detectou dados de precipitação. " + 
+              "Adicionamos %d  mm de chuva.",
   }
 
   if lang == "pt-BR" ||  lang == "en-US" {
