@@ -144,6 +144,76 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
   }
 }
 
+func HandleUploadJSON(w http.ResponseWriter, r *http.Request) {
+  log.Printf("HandleUploadJSON")
+
+  vars := mux.Vars(r)
+  datatype := vars["datatype"]
+  log.Printf("HandleUploadJSON: %s", datatype)
+
+  ctx := r.Context()
+  userID := ctx.Value("user_id")
+  if userID == nil {
+    log.Printf("could not get userid from context")
+    http.Error(w, "Authorization header required", http.StatusUnauthorized)
+    return
+  }
+  u, err := user.Read(userID.(string))
+  if err != nil {
+    log.Printf("could not read userID from context")
+    http.Error(w, "User Not Found", http.StatusNotFound)
+    return
+  }
+
+  defer r.Body.Close()
+  bodyBytes, err := io.ReadAll(r.Body)
+  if err != nil {
+    http.Error(w, "Error reading request body", http.StatusInternalServerError)
+    log.Printf("Error reading request body: %v", err)
+    return
+  }
+
+  var records []map[string]interface{}
+  err = json.Unmarshal(bodyBytes, &records)
+  if err != nil {
+    http.Error(w, "Error parsing JSON", http.StatusBadRequest)
+    log.Printf("Error parsing JSON: %v", err)
+    return
+  }
+
+  collection := db.GetCollection(datatype)
+  inserted := 0
+  for _, record := range records {
+    record["account"] = u.Account
+
+    // Type coercion for known integer fields
+    for _, key := range []string{"tag", "amount", "temperature"} {
+      if val, ok := record[key]; ok {
+        switch v := val.(type) {
+        case float64:
+          record[key] = int(v)
+        case string:
+          if n, err := strconv.Atoi(v); err == nil {
+            record[key] = n
+          }
+        }
+      }
+    }
+
+    log.Printf("record: %+v", record)
+    result, err := collection.InsertOne(context.TODO(), record)
+    if err != nil {
+      log.Printf("Error inserting %s record: %+v, err: %v", datatype, record, err)
+      continue
+    }
+    log.Printf("result: %+v", result)
+    inserted++
+  }
+
+  w.Header().Set("Content-Type", "application/json")
+  fmt.Fprintf(w, `{"inserted":%d,"total":%d}`, inserted, len(records))
+}
+
 func HandleDataGet(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   datatype := vars["datatype"]
