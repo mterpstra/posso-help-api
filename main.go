@@ -101,6 +101,7 @@ func main() {
   uploadRouter := r.PathPrefix("/api/upload").Subrouter()
   uploadRouter.Use(AuthMiddleware)
   uploadRouter.HandleFunc("/{datatype}", HandleUpload).Methods("POST")
+  uploadRouter.HandleFunc("/{datatype}/json", HandleUploadJSON).Methods("POST")
 
   // User routes
   userRouter := r.PathPrefix("/api/user").Subrouter()
