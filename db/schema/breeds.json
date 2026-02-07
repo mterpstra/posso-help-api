@@ -1,0 +1,14 @@
+[
+  { "name": "angus",        "account": "000000000000000000000000" },
+  { "name": "nelore",       "account": "000000000000000000000000" },
+  { "name": "brangus",      "account": "000000000000000000000000" },
+  { "name": "sta_zelia",    "account": "000000000000000000000000" },
+  { "name": "cruzada",      "account": "000000000000000000000000" },
+  { "name": "murrah",       "account": "000000000000000000000000" },
+  { "name": "mediterrâneo", "account": "000000000000000000000000" },
+  { "name": "jafarabadi",   "account": "000000000000000000000000" },
+  { "name": "carabao",      "account": "000000000000000000000000" },
+  { "name": "marchigiana",  "account": "000000000000000000000000" },
+  { "name": "charolais",    "account": "000000000000000000000000" },
+  { "name": "sindi",        "account": "000000000000000000000000" }
+]
