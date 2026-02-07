@@ -6,6 +6,7 @@ import (
   "strings"
   "time"
   "posso-help/internal/area"
+  "posso-help/internal/breed"
   "posso-help/internal/account"
   "posso-help/internal/textmsg"
 )
@@ -117,8 +118,15 @@ func (e Entry) Process() error {
       err = areaParser.LoadAreasByAccount(team.Account)
       if err != nil {
         log.Printf("WARNING: Could not load areas from account: %v\n", team.Account)
-      } 
+      }
       birthMessageParser.AreaParser = areaParser
+
+      breedParser := &breed.BreedParser{}
+      err = breedParser.LoadBreedsByAccount(team.Account)
+      if err != nil {
+        log.Printf("WARNING: Could not load breeds from account: %v\n", team.Account)
+      }
+      birthMessageParser.BreedParser = breedParser
       baseMessageValues := &BaseMessageValues {
         Account      : team.Account,
         PhoneNumber  : message.From,

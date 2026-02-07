@@ -1,0 +1,14 @@
+[
+  { "name": "angus",        "matches": "angus;ang",                      "account": "000000000000000000000000" },
+  { "name": "nelore",       "matches": "nelore;nel",                     "account": "000000000000000000000000" },
+  { "name": "brangus",      "matches": "brangus;bran",                   "account": "000000000000000000000000" },
+  { "name": "sta_zelia",    "matches": "sta_zelia;sta.zelia;zelia",      "account": "000000000000000000000000" },
+  { "name": "cruzada",      "matches": "cruzada;cruzado;cruz",           "account": "000000000000000000000000" },
+  { "name": "murrah",       "matches": "murrah;mur",                     "account": "000000000000000000000000" },
+  { "name": "mediterrâneo", "matches": "mediterrâneo;mediterraneo;med",  "account": "000000000000000000000000" },
+  { "name": "jafarabadi",   "matches": "jafarabadi;jafa",                "account": "000000000000000000000000" },
+  { "name": "carabao",      "matches": "carabao;cara",                   "account": "000000000000000000000000" },
+  { "name": "marchigiana",  "matches": "marchigiana;march",              "account": "000000000000000000000000" },
+  { "name": "charolais",    "matches": "charolais;char",                 "account": "000000000000000000000000" },
+  { "name": "sindi",        "matches": "sindi;sind",                     "account": "000000000000000000000000" }
+]

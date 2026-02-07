@@ -461,9 +461,22 @@ func HandleDataDelete(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   datatype := vars["datatype"]
   id := vars["id"]
-  collection := db.GetCollection(datatype);
-  log.Printf("Deleteing:  datatype: %s, id: %s", datatype, id)
+  log.Printf("Deleting:  datatype: %s, id: %s", datatype, id)
 
+  ctx := r.Context()
+  userID := ctx.Value("user_id")
+  if userID == nil {
+    log.Printf("could not get userid from context")
+    http.Error(w, "Authorization header required", http.StatusUnauthorized)
+    return
+  }
+
+  u, err := user.Read(userID.(string))
+  if err != nil {
+    log.Printf("could not read userID from context")
+    http.Error(w, "User Not Found", http.StatusNotFound)
+    return
+  }
 
   objID, err := primitive.ObjectIDFromHex(id)
   if err != nil {
@@ -472,17 +485,25 @@ func HandleDataDelete(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  filter := bson.M{"_id": objID}
+  // Only allow deleting records that belong to the user's account
+  collection := db.GetCollection(datatype)
+  filter := bson.M{"_id": objID, "account": u.Account}
   deleteResult, err := collection.DeleteOne(context.TODO(), filter)
   if err != nil {
-    log.Fatal(err)
     http.Error(w, "error_deleting_id", http.StatusBadRequest)
     log.Printf("Error Deleting ID: %s %v", id, err)
     return
   }
-  log.Printf("Number of records deleted: %d by filter %v", 
-  deleteResult.DeletedCount, filter)
-  return 
+
+  if deleteResult.DeletedCount == 0 {
+    http.Error(w, "record_not_found_or_not_authorized", http.StatusForbidden)
+    log.Printf("No record deleted - either not found or not authorized: id=%s account=%s", id, u.Account)
+    return
+  }
+
+  log.Printf("Number of records deleted: %d by filter %v",
+    deleteResult.DeletedCount, filter)
+  return
 }
 
 func HandleChatMessage(w http.ResponseWriter, r *http.Request) {

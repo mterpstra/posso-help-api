@@ -6,6 +6,7 @@ import (
   "fmt"
   "strings"
   "posso-help/internal/area"
+  "posso-help/internal/breed"
   "posso-help/internal/db"
   "posso-help/internal/date"
   "posso-help/internal/utils"
@@ -35,6 +36,7 @@ type BirthMessage struct {
   Entries []*BirthEntry
   Area *area.Area
   AreaParser *area.AreaParser
+  BreedParser *breed.BreedParser
   NewAreaFound bool
   Total int
 }
@@ -84,14 +86,19 @@ func (b *BirthMessage) Parse(message string) bool {
 
 func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
   var num int
-  var sex, breed string
+  var sex, breedText string
   line = utils.SanitizeLine(line)
 
   // Standard Birth Line
-  n, err := fmt.Sscanf(line, "%d %s %s", &num, &sex, &breed)
-  if err == nil && n == 3 && num > 0 &&
-    (utils.StringIsOneOf(sex, SEXES)) && (utils.StringIsOneOf(breed, BREEDS)) {
-    return &BirthEntry{num, sex, breed}
+  n, err := fmt.Sscanf(line, "%d %s %s", &num, &sex, &breedText)
+  if err == nil && n == 3 && num > 0 && utils.StringIsOneOf(sex, SEXES) {
+    // Check breed against account-specific breeds if parser is available
+    // MatchBreed returns the canonical breed name if a match is found
+    if b.BreedParser != nil {
+      if breedName, found := b.BreedParser.MatchBreed(breedText); found {
+        return &BirthEntry{num, sex, breedName}
+      }
+    }
   }
 
   return nil
