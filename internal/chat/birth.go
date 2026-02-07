@@ -86,19 +86,22 @@ func (b *BirthMessage) Parse(message string) bool {
 
 func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
   var num int
-  var sex, breedName string
+  var sex, breedText string
   line = utils.SanitizeLine(line)
 
   // Standard Birth Line
-  n, err := fmt.Sscanf(line, "%d %s %s", &num, &sex, &breedName)
+  n, err := fmt.Sscanf(line, "%d %s %s", &num, &sex, &breedText)
   if err == nil && n == 3 && num > 0 && utils.StringIsOneOf(sex, SEXES) {
     // Check breed against account-specific breeds if parser is available
-    if b.BreedParser != nil && b.BreedParser.IsValidBreed(breedName) {
-      return &BirthEntry{num, sex, breedName}
+    // MatchBreed returns the canonical breed name if a match is found
+    if b.BreedParser != nil {
+      if breedName, found := b.BreedParser.MatchBreed(breedText); found {
+        return &BirthEntry{num, sex, breedName}
+      }
     }
     // Fall back to global BREEDS constant for backwards compatibility
-    if utils.StringIsOneOf(breedName, BREEDS) {
-      return &BirthEntry{num, sex, breedName}
+    if utils.StringIsOneOf(breedText, BREEDS) {
+      return &BirthEntry{num, sex, breedText}
     }
   }
 

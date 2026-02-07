@@ -6,12 +6,14 @@ import (
 	"strings"
 
 	"posso-help/internal/db"
+	"posso-help/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Breed struct {
-	Name string `bson:"name"`
+	Name    string `bson:"name"`
+	Matches string `bson:"matches"`
 }
 
 type BreedParser struct {
@@ -39,22 +41,31 @@ func (bp *BreedParser) LoadBreedsByAccount(account string) error {
 			log.Printf("Error decoding breed document: %v", err)
 			continue
 		}
-		log.Printf("LoadBreedsByAccount(%s): %s", account, breed.Name)
+		log.Printf("LoadBreedsByAccount(%s): %s  %s", account, breed.Name, breed.Matches)
 		bp.breeds = append(bp.breeds, breed)
 	}
 
 	return cursor.Err()
 }
 
-// IsValidBreed checks if the given breed name matches any loaded breed
-func (bp *BreedParser) IsValidBreed(name string) bool {
-	name = strings.ToLower(strings.TrimSpace(name))
+// MatchBreed checks if the given text matches any breed's matches
+// Returns the breed name if found, empty string otherwise
+func (bp *BreedParser) MatchBreed(text string) (string, bool) {
+	text = strings.ToLower(strings.TrimSpace(text))
 	for _, breed := range bp.breeds {
-		if strings.ToLower(breed.Name) == name {
-			return true
+		matches := utils.SplitAndTrim(strings.ToLower(breed.Matches))
+		if utils.StringIsOneOf(text, matches) {
+			log.Printf("MatchBreed: found, name=%s for text=%s", breed.Name, text)
+			return breed.Name, true
 		}
 	}
-	return false
+	return "", false
+}
+
+// IsValidBreed checks if the given breed name matches any loaded breed
+func (bp *BreedParser) IsValidBreed(name string) bool {
+	_, found := bp.MatchBreed(name)
+	return found
 }
 
 // GetBreedNames returns a slice of all loaded breed names
