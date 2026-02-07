@@ -99,10 +99,6 @@ func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
         return &BirthEntry{num, sex, breedName}
       }
     }
-    // Fall back to global BREEDS constant for backwards compatibility
-    if utils.StringIsOneOf(breedText, BREEDS) {
-      return &BirthEntry{num, sex, breedText}
-    }
   }
 
   return nil
