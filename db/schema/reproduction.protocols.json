@@ -1,0 +1,308 @@
+[
+  {
+    "_id": {
+      "$oid": "6957249c86fed12ada04e50b"
+    },
+    "name": "7-day CO-Synch + CIDR",
+    "description": "A common estrus synchronization and fixed-time artificial inseination (TAI) protocol for beef cattle.",
+    "notes": "Cows typically have TAI later than heifers. This protocol requires only three trips through the chute.",
+    "target_animals": [
+      "Cows",
+      "Heifers"
+    ],
+    "timeline_days": [
+      {
+        "start_day": 0,
+        "end_day": 0,
+        "event": "Initial administration of hormones and CIDR insertion",
+        "treatments": [
+          {
+            "medication": "GnRH (gonadotropin-releasing hormone)",
+            "notes": "e.g., Fertagyl, Cystorelin"
+          },
+          {
+            "device": "CIDR (Controlled Internal Drug Release) insert",
+            "notes": "Progesterone insert remains in place for 7 days"
+          }
+        ]
+      },
+      {
+        "start_day": 7,
+        "end_day": 7,
+        "event": "CIDR removal and administration of Prostaglandin (PG)",
+        "treatments": [
+          {
+            "device": "CIDR removal",
+            "notes": "Remove intravaginal insert"
+          },
+          {
+            "medication": "PGF2a (prostaglandin F2 alpha)",
+            "notes": "e.g., Estrumate, Lutalyse, InSynch"
+          }
+        ]
+      },
+      {
+        "start_day": 9,
+        "end_day": 10,
+        "event": "Fixed-time AI (TAI) with concurrent GnRH administration",
+        "timing_cows": "60 to 66 hours after PGF2a injection/CIDR removal",
+        "timing_heifers": "52 to 56 hours after PGF2a injection/CIDR removal",
+        "treatments": [
+          {
+            "procedure": "Artificial Insemination (AI)",
+            "notes": "Fixed-time AI (TAI)"
+          },
+          {
+            "medication": "GnRH",
+            "notes": "Administered at the time of AI"
+          }
+        ]
+      }
+    ],
+    "account": "000000000000000000000000"
+  },
+  {
+    "_id": {
+      "$oid": "6957249c86fed12ada04e50c"
+    },
+    "name": "Zoetis",
+    "description": "Protocolo Premium Zoetis com GnRH",
+    "notes": "This protocol has top options 1 CIDR or 2 CIDR",
+    "target_animals": [
+      "Cows",
+      "Heifers"
+    ],
+    "timeline_days": [
+      {
+        "start_day": 0,
+        "end_day": 0,
+        "event": "Initial Dose of Medication",
+        "treatments": [
+          {
+            "medication": "2,0 mL GONADIOL"
+          },
+          {
+            "medication": "+ 100 mcg GnRH",
+            "notes": "Only if using 1-CIDR Variation"
+          }
+        ]
+      },
+      {
+        "start_day": 7,
+        "end_day": 7,
+        "event": "Second Dose of Medication",
+        "treatments": [
+          {
+            "medication": "5,0 mL LUTALYSE"
+          },
+          {
+            "notes": "If using 2-CIDR, this ends the first CIDR"
+          }
+        ]
+      },
+      {
+        "start_day": 9,
+        "end_day": 9,
+        "event": "Third Dose of meciation",
+        "treatments": [
+          {
+            "medication": "2,5 mL LUTALYSE"
+          },
+          {
+            "medication": "+ 0,5 mL E.C.P."
+          },
+          {
+            "notes": "End of CIDR"
+          }
+        ]
+      },
+      {
+        "start_day": 11,
+        "end_day": 11,
+        "event": "IATF"
+      }
+    ],
+    "account": "000000000000000000000000"
+  },
+  {
+    "_id": {
+      "$oid": "6957249c86fed12ada04e50d"
+    },
+    "name": "Ourofino Saúde Animal",
+    "description": "Basic 14 day protocol",
+    "notes": "This is a 14 day protocol",
+    "target_animals": [
+      "Cows",
+      "Heifers"
+    ],
+    "timeline_days": [
+      {
+        "start_day": 0,
+        "end_day": 0,
+        "event": "Initial Dose of Medication",
+        "treatments": [
+          {
+            "medication": "2,0 mL SINCRODIOL",
+            "notes": "Start of SINCROGEST process"
+          }
+        ]
+      },
+      {
+        "start_day": 8,
+        "end_day": 8,
+        "event": "Second Dose of Medications",
+        "treatments": [
+          {
+            "medication": "2,0 ml SINCROCIO"
+          },
+          {
+            "medication": "1,0 ml SINCROCP"
+          },
+          {
+            "medication": "1,5 ml SINCRO eCG"
+          }
+        ]
+      },
+      {
+        "start_day": 10,
+        "end_day": 10,
+        "event": "IATF"
+      },
+      {
+        "start_day": 14,
+        "end_day": 14,
+        "event": "Last Dose of Medication",
+        "treatments": [
+          {
+            "medication": "1,0 ml SINCROGEST",
+            "notes": "injetável"
+          }
+        ]
+      }
+    ],
+    "account": "000000000000000000000000"
+  },
+  {
+    "_id": {
+      "$oid": "6957249c86fed12ada04e50e"
+    },
+    "name": "Protocolo Para - Novilhas e Vacas",
+    "description": "",
+    "notes": "Sempre avaliar ciclicidade e/ou prenhez das novilhas e vacas solteiras por ultrassonografia antes do manejo de IATF.",
+    "target_animals": [
+      "Cows",
+      "Heifers"
+    ],
+    "timeline_days": [
+      {
+        "start_day": 0,
+        "end_day": 0,
+        "event": "Initial Dose of Medication",
+        "treatments": [
+          {
+            "medication": "2mg (2ml) RIC - BE BE)",
+            "notes": "Implante USADO - 8 ou 9 DIAS"
+          },
+          {
+            "medication": "0,24mg (1ml) ESTRON (PGF2a)"
+          }
+        ]
+      },
+      {
+        "start_day": 8,
+        "end_day": 9,
+        "event": "Second Dose of Medications",
+        "treatments": [
+          {
+            "medication": "3000(1,5ml) de Folligon"
+          },
+          {
+            "medication": "0,6mg (0,3ml) de ECP (CE)"
+          },
+          {
+            "medication": "0,36mg (1,5ml) ESTRON (PGF2a)"
+          }
+        ]
+      },
+      {
+        "start_day": 10,
+        "end_day": 11,
+        "event": "IATF",
+        "treatments": [
+          {
+            "notes": "48 HORAS"
+          }
+        ]
+      }
+    ],
+    "account": "000000000000000000000000"
+  },
+  {
+    "_id": {
+      "$oid": "6957249c86fed12ada04e50f"
+    },
+    "name": "Ressincronização Super Precoce",
+    "description": "A ressincronização inicia-se aproximadamente 14 dias após a IATF anterior. No dia da retirada do dispositivo (D22) é realizado o DG precoce (modo Doppler) e as fêmeas não prenhes continuam o protocolo para próxima IATF.",
+    "notes": "",
+    "target_animals": [
+      "Cows",
+      "Heifers"
+    ],
+    "timeline_days": [
+      {
+        "start_day": 0,
+        "end_day": 0,
+        "event": "Inicio protocolo",
+        "treatments": [
+          {
+            "notes": "Syncrogen",
+            "device": "Dispositivo de P4"
+          },
+          {
+            "notes": "Induscio"
+          }
+        ]
+      },
+      {
+        "start_day": 14,
+        "end_day": 14,
+        "event": "Second Dose of Medications",
+        "treatments": [
+          {
+            "device": "Dispositivo de P4"
+          }
+        ]
+      },
+      {
+        "start_day": 22,
+        "end_day": 22,
+        "event": "IATF",
+        "treatments": [
+          {
+            "notes": "DG Precoce Modo Doppler"
+          },
+          {
+            "notes": "Cipion"
+          },
+          {
+            "notes": "eCGen"
+          },
+          {
+            "notes": "Induscio"
+          }
+        ]
+      },
+      {
+        "start_day": 24,
+        "end_day": 24,
+        "event": "2nd IATF",
+        "treatments": [
+          {
+            "notes": "Maxrelin"
+          }
+        ]
+      }
+    ],
+    "account": "000000000000000000000000"
+  }
+]
