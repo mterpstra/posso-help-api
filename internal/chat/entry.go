@@ -141,6 +141,10 @@ func (e Entry) Process() error {
           if err := parser.Insert(baseMessageValues); err != nil {
             log.Printf("Error insert record into DB: %v\n", err)
           }
+          // Save the parsed message to the messages collection
+          if err := SaveParsedMessage(baseMessageValues, msg, parser.GetCollection()); err != nil {
+            log.Printf("Error saving parsed message: %v\n", err)
+          }
           text := textmsg.NewMessageSender(message.From, parser.Text(team.Language))
           if err := text.Send(); err != nil {
             log.Printf("Error during text reply: %v\n", err)
