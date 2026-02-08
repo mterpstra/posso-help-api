@@ -1,0 +1,17 @@
+[
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-01T08:30:00Z", "raw_message": "nasceu bezerro nelore macho brinco 1234", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-01T14:15:00Z", "raw_message": "nasceu femea angus 5678 pasto norte", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512988776655", "name": "Maria Santos", "date": "2026-02-02T07:45:00Z", "raw_message": "chuva 45mm", "message_type": "rain" },
+  { "account": "000000000000000000000000", "phone": "5512988776655", "name": "Maria Santos", "date": "2026-02-02T16:00:00Z", "raw_message": "temperatura 32", "message_type": "temperature" },
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-03T09:00:00Z", "raw_message": "morreu brinco 4321 ontem picada cobra", "message_type": "death" },
+  { "account": "000000000000000000000000", "phone": "5512977665544", "name": "Pedro Oliveira", "date": "2026-02-03T11:30:00Z", "raw_message": "nasceu macho brangus 9012", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512988776655", "name": "Maria Santos", "date": "2026-02-04T06:00:00Z", "raw_message": "chuva 12mm ontem", "message_type": "rain" },
+  { "account": "000000000000000000000000", "phone": "5512977665544", "name": "Pedro Oliveira", "date": "2026-02-04T15:20:00Z", "raw_message": "nasceu femea nelore 3456 area sul", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-05T08:00:00Z", "raw_message": "temperatura 28 graus", "message_type": "temperature" },
+  { "account": "000000000000000000000000", "phone": "5512988776655", "name": "Maria Santos", "date": "2026-02-05T10:45:00Z", "raw_message": "nasceu bezerro cruzada macho 7890", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512977665544", "name": "Pedro Oliveira", "date": "2026-02-06T07:15:00Z", "raw_message": "chuva 78mm temporal forte", "message_type": "rain" },
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-06T14:00:00Z", "raw_message": "morreu 8765 aborto", "message_type": "death" },
+  { "account": "000000000000000000000000", "phone": "5512988776655", "name": "Maria Santos", "date": "2026-02-07T09:30:00Z", "raw_message": "nasceu femea charolais brinco 2468", "message_type": "birth" },
+  { "account": "000000000000000000000000", "phone": "5512977665544", "name": "Pedro Oliveira", "date": "2026-02-07T12:00:00Z", "raw_message": "temperatura 35", "message_type": "temperature" },
+  { "account": "000000000000000000000000", "phone": "5512999887766", "name": "João Silva", "date": "2026-02-07T16:30:00Z", "raw_message": "nasceu macho murrah 1357 pasto leste", "message_type": "birth" }
+]
