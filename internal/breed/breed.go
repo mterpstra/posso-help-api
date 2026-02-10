@@ -76,3 +76,8 @@ func (bp *BreedParser) GetBreedNames() []string {
 	}
 	return names
 }
+
+// AddBreed adds a breed to the parser (useful for testing)
+func (bp *BreedParser) AddBreed(name, matches string) {
+	bp.breeds = append(bp.breeds, &Breed{Name: name, Matches: matches})
+}
