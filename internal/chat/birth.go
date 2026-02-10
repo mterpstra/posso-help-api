@@ -27,6 +27,7 @@ type Birth struct {
 
 type BirthEntry struct {
   Id       int    `json:"tag"`
+  Dam      int    `json:"dam"`
   Sex      string `json:"sex"`
   Breed    string `json:"breed"`
 }
@@ -60,9 +61,17 @@ func (b *BirthMessage) Parse(message string) bool {
       found = true
       parsedLines[index] = true
     }
-    if areaName, found := b.AreaParser.ParseAsAreaLine(line); found {
-      b.Area = &area.Area{Name:areaName}
+    if entry := b.parseAsCalfLine(line); entry != nil {
+      b.Entries = append(b.Entries, entry)
+      b.Total++
+      found = true
       parsedLines[index] = true
+    }
+    if b.AreaParser != nil {
+      if areaName, found := b.AreaParser.ParseAsAreaLine(line); found {
+        b.Area = &area.Area{Name:areaName}
+        parsedLines[index] = true
+      }
     }
   }
 
@@ -96,7 +105,32 @@ func (b *BirthMessage) parseAsBirthLine(line string) (*BirthEntry) {
     // MatchBreed returns the canonical breed name if a match is found
     if b.BreedParser != nil {
       if breedName, found := b.BreedParser.MatchBreed(breedText); found {
-        return &BirthEntry{num, sex, breedName}
+        return &BirthEntry{num, 0, sex, breedName}
+      }
+    }
+  }
+
+  return nil
+}
+
+// Keywords that indicate a calf entry (English and Portuguese)
+var CALF_KEYWORDS = []string{"calf", "bezerro", "bezerra", "bez"}
+
+func (b *BirthMessage) parseAsCalfLine(line string) (*BirthEntry) {
+  var dam int
+  var sex, breedText string
+  line = utils.SanitizeLine(line)
+
+  // Try each calf keyword: {keyword} {dam} {sex} {breed}
+  for _, keyword := range CALF_KEYWORDS {
+    var keywordMatch string
+    n, err := fmt.Sscanf(line, "%s %d %s %s", &keywordMatch, &dam, &sex, &breedText)
+    if err == nil && n == 4 && keywordMatch == keyword && dam > 0 && utils.StringIsOneOf(sex, SEXES) {
+      // Check breed against account-specific breeds if parser is available
+      if b.BreedParser != nil {
+        if breedName, found := b.BreedParser.MatchBreed(breedText); found {
+          return &BirthEntry{0, dam, sex, breedName}
+        }
       }
     }
   }
@@ -126,6 +160,7 @@ func (b *BirthMessage) Insert(bmv *BaseMessageValues) error {
   for _, birth := range b.Entries {
     document := bmv.ToMap()
     document = append(document, bson.E{Key: "tag", Value: birth.Id})
+    document = append(document, bson.E{Key: "dam", Value: birth.Dam})
     document = append(document, bson.E{Key: "sex", Value: birth.Sex})
     document = append(document, bson.E{Key: "breed", Value: birth.Breed})
     document = append(document, bson.E{Key: "area", Value: b.Area.Name})
