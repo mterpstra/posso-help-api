@@ -11,6 +11,7 @@ import (
   "posso-help/internal/date"
   "posso-help/internal/utils"
   "go.mongodb.org/mongo-driver/bson"
+  "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Birth struct {
@@ -154,34 +155,58 @@ func (b *BirthMessage) Text(lang string) string {
   return fmt.Sprintf(reply["pt-BR"], b.Total, b.Area.Name)
 }
 
-func (b *BirthMessage) Insert(bmv *BaseMessageValues) error {
+func (b *BirthMessage) insertBirth(bmv *BaseMessageValues, birth *BirthEntry) error {
   births := db.GetCollection("births")
+  document := bmv.ToMap()
+  document = append(document, bson.E{Key: "tag", Value: birth.Id})
+  document = append(document, bson.E{Key: "dam", Value: birth.Dam})
+  document = append(document, bson.E{Key: "sex", Value: birth.Sex})
+  document = append(document, bson.E{Key: "breed", Value: birth.Breed})
+  document = append(document, bson.E{Key: "area", Value: b.Area.Name})
+  if b.Date != "" {
+    document = append(document, bson.E{Key: "date", Value: b.Date})
+  }
+  _, err := births.InsertOne(context.TODO(), document)
+  return err
+}
 
+func (b *BirthMessage) insertCalf(bmv *BaseMessageValues, birth *BirthEntry) error {
+  log.Printf("Duplicate tag %d found, converting to calf entry with dam=%d", birth.Id, birth.Id)
+  births := db.GetCollection("births")
+  document := bmv.ToMap()
+  document = append(document, bson.E{Key: "tag", Value: 0})
+  document = append(document, bson.E{Key: "dam", Value: birth.Id})
+  document = append(document, bson.E{Key: "sex", Value: birth.Sex})
+  document = append(document, bson.E{Key: "breed", Value: birth.Breed})
+  document = append(document, bson.E{Key: "area", Value: b.Area.Name})
+  if b.Date != "" {
+    document = append(document, bson.E{Key: "date", Value: b.Date})
+  }
+  _, err := births.InsertOne(context.TODO(), document)
+  return err
+}
+
+func (b *BirthMessage) Insert(bmv *BaseMessageValues) error {
   for _, birth := range b.Entries {
-    document := bmv.ToMap()
-    document = append(document, bson.E{Key: "tag", Value: birth.Id})
-    document = append(document, bson.E{Key: "dam", Value: birth.Dam})
-    document = append(document, bson.E{Key: "sex", Value: birth.Sex})
-    document = append(document, bson.E{Key: "breed", Value: birth.Breed})
-    document = append(document, bson.E{Key: "area", Value: b.Area.Name})
-
-    // If the message text has a date, use it over the message date
-    if b.Date != "" {
-      document = append(document, bson.E{Key: "date", Value: b.Date})
-    }
-
-    _, err := births.InsertOne(context.TODO(), document)
+    err := b.insertBirth(bmv, birth)
     if err != nil {
-      return err
+      if mongo.IsDuplicateKeyError(err) && birth.Id > 0 {
+        err = b.insertCalf(bmv, birth)
+        if err != nil {
+          return err
+        }
+      } else {
+        return err
+      }
     }
   }
 
   if b.NewAreaFound {
-    err := area.AddArea(bmv.Account, b.Area.Name, b.Area.Name) 
+    err := area.AddArea(bmv.Account, b.Area.Name, b.Area.Name)
     if err != nil {
       fmt.Printf("Could not add new area %v", err)
     }
   }
-  
+
   return nil
 }
